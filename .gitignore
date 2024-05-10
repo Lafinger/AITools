@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# UE files
+*Intermediate
+*Binaries
