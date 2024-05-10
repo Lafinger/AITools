@@ -1,2 +1,2 @@
 # AITools
-UE AITools Plugins
+UE AITools
