@@ -115,7 +115,7 @@ void UVoiceWakeUpSubsystem::StartInternal()
 	bIsCompleted = false;
 	bIsWakeUpContinue = true;
 
-	FString AbsoluteFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "VoiceWakeUp/Source/ThirdParty/VoiceWakeUpSdk/res/wakeupresource.jet";
+	FString AbsoluteFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "AITools/VoiceWakeUp/Source/ThirdParty/VoiceWakeUpSdk/res/wakeupresource.jet";
 	AbsoluteFilePath = AbsoluteFilePath.Replace(TEXT("/"), TEXT("\\\\"));
 	FString Params = "ivw_threshold=0:1450,sst=wakeup,ivw_res_path =fo|" + AbsoluteFilePath;
 	
