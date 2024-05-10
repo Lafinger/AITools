@@ -1,0 +1,5 @@
+[Mon May 08 2023 10:26:38 GMT+0800 (GMT+08:00)]: 新用户连接：T8eK-Mr7FgzTbsbYAAAB
+[Mon May 08 2023 10:26:38 GMT+0800 (GMT+08:00)]: 新用户连接：QsU8yX9pG2B_MpqQAAAD
+[Mon May 08 2023 10:26:43 GMT+0800 (GMT+08:00)]: 新用户连接：ThZzxqSCo3JkkCJVAAAF
+[Mon May 08 2023 10:26:45 GMT+0800 (GMT+08:00)]: 新用户连接：ni08MufBm3DXF63tAAAH
+[Mon May 08 2023 10:26:54 GMT+0800 (GMT+08:00)]: {"eventNames":"clientMessage","eventBody":{"action":{"type":"setNum","payload":1},"connected":true,"channelInfos":{"name":"airt-channel","size":1,"members":[{"role":"WebClient","id":"AIRT-ni08MufBm3DXF63tAAAH","ipAddress":"::1"}]},"clientsCount":2,"clients":[{"role":"WebController","id":"AIRT-ThZzxqSCo3JkkCJVAAAF","ipAddress":"::1"},{"role":"WebClient","id":"AIRT-ni08MufBm3DXF63tAAAH","ipAddress":"::1"}],"currentClient":{"role":"WebController","id":"AIRT-ThZzxqSCo3JkkCJVAAAF","ipAddress":"::1"}}}

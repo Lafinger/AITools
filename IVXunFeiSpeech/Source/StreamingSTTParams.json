@@ -1,0 +1,29 @@
+{
+	"common":
+	{
+	   "app_id":"{0}"
+	},
+	"business":
+	{
+		"language":"{1}",
+		"domain":"{2}",
+		"accent":"{3}",
+		"vad_eos":"{4}",
+		"dwa":"{5}",
+		"pd":"{6}",
+		"ptt":"{7}",
+		"rlang":"{8}",
+		"vinfo":"{9}",
+		"nunum":"{10}",
+		"speex_size":"{11}",
+		"nbest":"{12}",
+		"wbest":"{13}"
+	},
+	"data":
+	{
+		"status":0,
+		"format":"{15}",
+		"encoding":"{16}",
+		"audio":"{17}"
+	}
+}

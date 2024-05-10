@@ -1,0 +1,8 @@
+[2024-03-04T10:56:58.023] [INFO] socketLog - Server have start on: http://127.0.0.1:8040/AIRT
+[2024-03-04T10:56:58.024] [WARN] socketLog - Only server mode
+[2024-03-04T10:57:22.596] [INFO] socketLog - EventName: "ConnectionBroadcast", EventBody: {"bConnected":true,"ClientsCountTotal":1,"GroupInfo":{"Name":"AIRTGroup","Size":1,"Members":{"0":{"ID":"TkvRhxkf-73NhKc1AAAC","UserRole":"WebClient","UserGroup":"AIRTGroup","IPAddr":"::ffff:127.0.0.1"}}},"InvokerInfo":{"ID":"TkvRhxkf-73NhKc1AAAC","UserRole":"WebClient","UserGroup":"AIRTGroup","IPAddr":"::ffff:127.0.0.1"}}
+[2024-03-04T10:59:22.131] [INFO] socketLog - EventName: "DisconnectionBroadcast", EventBody: {"bConnected":false,"ClientsCountTotal":0,"GroupInfo":{"Name":"AIRTGroup","Size":0,"Members":[]},"Reason":"transport close","InvokerInfo":{"ID":"TkvRhxkf-73NhKc1AAAC","UserRole":"WebClient","UserGroup":"AIRTGroup","IPAddr":"::ffff:127.0.0.1"}}
+[2024-03-04T11:06:05.013] [INFO] socketLog - Server have start on: http://127.0.0.1:8040/AIRT
+[2024-03-04T11:06:05.013] [WARN] socketLog - Only server mode
+[2024-03-04T11:33:21.107] [INFO] socketLog - Server have start on: http://127.0.0.1:8040/AIRT
+[2024-03-04T11:33:21.108] [WARN] socketLog - Only server mode
