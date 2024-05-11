@@ -78,7 +78,7 @@ UDifyModelAsyncTaskAction* UDifyModelAsyncTaskAction::AsyncHttpRequest(
 	FString RequestBody = FString::Format(TEXT("{ \"inputs\":\"{0}\", \"query\":\"{1}\", \"response_mode\":\"{2}\", \"conversation_id\":\"{3}\", \"user\":\"{4}\" }"), TArray<FStringFormatArg>({ FString(), Question, ResponseMode,  ConversationID, Settings->DifySetting.User}));
 	NewAsync->HttpRequest->SetContentAsString(RequestBody);
 	UE_LOG(LogDifyModelAsyncAction, Display, TEXT("ThreadID:%d, %s: request body : %s"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__), *RequestBody);
-			
+	
 	//发送请求
 	NewAsync->HttpRequest->ProcessRequest();
 	return NewAsync;
