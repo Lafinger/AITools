@@ -43,7 +43,7 @@ void UIVXunFeiTTSSubsystem::BeginRealTimeSpeechToText(FXunFeiRealTimeSTTOptions&
 
 	bool bRightAudioRateAndChannles = AudioCaptureDeviceInfo.SampleRate == 48000 && AudioCaptureDeviceInfo.NumInputChannels == 2;
 
-	bRightAudioRateAndChannles = true;
+	check(bRightAudioRateAndChannles && "Ensure audio capture device info SampleRate == 48000 && NumInputChannels == 2");
 
 	if (!bGetAudioDevice || !bRightAudioRateAndChannles)
 	{
@@ -130,7 +130,7 @@ void UIVXunFeiTTSSubsystem::BeginStreamingSpeechToText(FXunFeiStreamingSTTOption
 	
 	bool bRightAudioRateAndChannles = AudioCaptureDeviceInfo.SampleRate == 48000 && AudioCaptureDeviceInfo.NumInputChannels == 2;
 	
-	bRightAudioRateAndChannles = true;
+	check(bRightAudioRateAndChannles && "Ensure audio capture device info SampleRate == 48000 && NumInputChannels == 2");
 	
 	if (!bGetAudioDevice || !bRightAudioRateAndChannles)
 	{
@@ -431,6 +431,8 @@ void UIVXunFeiTTSSubsystem::OnStreamingSTTConnected()
 		VoiceRunnable->OnAudioBufferResult.BindUObject(this,&UIVXunFeiTTSSubsystem::SendStreamingSTTVoiceData);
 		
 		StreamingSTTInitdDelegate.Broadcast();
+
+		UE_LOG(LogIVXunFei, Warning, TEXT("%s: Voice listener start."), *FString(__FUNCTION__));
 	}
 }
 
