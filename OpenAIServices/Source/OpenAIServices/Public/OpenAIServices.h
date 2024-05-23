@@ -1,11 +1,11 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FStableDiffusionWebToolModule : public IModuleInterface
+class FOpenAIServicesModule : public IModuleInterface
 {
 public:
 

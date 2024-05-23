@@ -1,10 +1,10 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
-public class StableDiffusionWebTool : ModuleRules
+public class OpenAIServices : ModuleRules
 {
-	public StableDiffusionWebTool(ReadOnlyTargetRules Target) : base(Target)
+	public OpenAIServices(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,7 +26,6 @@ public class StableDiffusionWebTool : ModuleRules
 			new string[]
 			{
 				"Core",
-				"IVCommon",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -39,12 +38,6 @@ public class StableDiffusionWebTool : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"RHI",
-				"RenderCore",
-				"HTTP",
-				"Json",
-				"DeveloperSettings",
-				"JsonUtilities",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

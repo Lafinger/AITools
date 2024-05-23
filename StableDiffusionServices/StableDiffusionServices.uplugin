@@ -2,8 +2,8 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "StableDiffusionWebTool",
-	"Description": "通过Http请求访问stable-diffusion-webui",
+	"FriendlyName": "StableDiffusionServices",
+	"Description": "stable diffusion 相关服务",
 	"Category": "Other",
 	"CreatedBy": "Jason Chen",
 	"CreatedByURL": "",
@@ -15,7 +15,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "StableDiffusionWebTool",
+			"Name": "StableDiffusionServices",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
