@@ -27,7 +27,7 @@ bool UVoicePlayerComponent::PlayVoiceOnce(USoundWave* InSoundWave, FPlayVoiceOnc
 	StopVoicePlayer();
 	OnAudioFinished.RemoveDynamic(this, &UVoicePlayerComponent::OnPlayVoiceOnceCompleted);
 	
-	if(!InSoundWave || !InSoundWave->IsValidLowLevel())
+	if(!InSoundWave || !InSoundWave->IsValidLowLevel() || !InSoundWave->RawPCMData || InSoundWave->RawPCMDataSize == 0 || !InSoundWave->GetDuration())
 	{
 		UE_LOG(LogVoicePlayerComponent, Error, TEXT("ThreadID:%d, %s: Input sound wave invalid!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
 		return false;
