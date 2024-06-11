@@ -5,13 +5,14 @@
 
 #include "StableDiffusionServicesSettings.h"
 #include "StableDiffusionServicesSubsystem.h"
+#include "StableDiffusionServicesUtilities.h"
 #include "Interfaces/IHttpResponse.h"
 
 UComfyUISubmitTaskAsyncAction::UComfyUISubmitTaskAsyncAction(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
 {
 }
 
-UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObject* WorldContextObject, int32 InTimeout)
+UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObject* WorldContextObject, const FString& InPrompt, int32 InTimeout)
 {
 	const UStableDiffusionServicesSettings* Settings = GetDefault<UStableDiffusionServicesSettings>();
 	if(!Settings)
@@ -44,18 +45,12 @@ UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObj
 	// AbsoluteFilePath = AbsoluteFilePath.Replace(TEXT("/"), TEXT("\\\\"));
 	
 	// Load json file to FJsonObject
-
-	// workflow_api.json
-	FString WorkflowAPIFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "AITools/StableDiffusionServices/Resources/ComfyUI/API/workflow_api.json";
-	// WorkflowAPIFilePath = WorkflowAPIFilePath.Replace(TEXT("/"), TEXT("\\\\"));
-	
-	FString WorkflowAPIJsonString;
-	bool bIsWorkflowAPIFileLoadSuccess = FFileHelper::LoadFileToString(WorkflowAPIJsonString, *WorkflowAPIFilePath);
-	if(!bIsWorkflowAPIFileLoadSuccess || WorkflowAPIJsonString.IsEmpty())
+	FString WorkflowAPIJsonString = FComfyUIUtilities::GetWorkflowAPIStringWithPrompt(InPrompt);
+	if(WorkflowAPIJsonString.IsEmpty())
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), 0.0, *FString(__FUNCTION__),
-			   TEXT("ComfyUI load workflow_api.json error or workflow_api.json is empty!"));
+			   TEXT("Get workflow API string error!"));
 		return nullptr;
 	}
 	
@@ -145,18 +140,18 @@ void UComfyUISubmitTaskAsyncAction::OnRequestProgressInternal(FHttpRequestPtr Re
 {
 	Super::OnRequestProgressInternal(Request, BytesSent, BytesReceived);
 
-	FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
-	if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
-	{
-		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
-			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
-			   TEXT("Http request invalid!"));
-		return;
-	}
-
-	UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
-	ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
-	ProcessDelegate.Broadcast(ProcessOutput);
+	// FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
+	// if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
+	// {
+	// 	UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
+	// 		   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
+	// 		   TEXT("Http request invalid!"));
+	// 	return;
+	// }
+	//
+	// UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	// ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
+	// ProcessDelegate.Broadcast(ProcessOutput);
 }
 
 void UComfyUISubmitTaskAsyncAction::OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
@@ -182,7 +177,7 @@ void UComfyUISubmitTaskAsyncAction::OnProcessRequestCompleteInternal(FHttpReques
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Convert submit task result to FJsonObject error!"));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Convert submit task result to FJsonObject error!");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		

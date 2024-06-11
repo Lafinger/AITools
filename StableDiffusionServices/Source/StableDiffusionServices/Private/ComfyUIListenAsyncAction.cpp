@@ -81,7 +81,7 @@ void UComfyUIListenAsyncAction::OnMessageInternal(const FString& MessageString)
 {
 	Super::OnMessageInternal(MessageString);
 	
-	UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	UStableDiffusionOutputsBase* ProcessOutput = NewObject<UStableDiffusionOutputsBase>(this);
 	ProcessOutput->Message = MessageString;
 	ProcessDelegate.Broadcast(ProcessOutput);
 }

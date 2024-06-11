@@ -20,6 +20,8 @@ public class StableDiffusionServices : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
+				"ThirdParty/WebpSDK/include",
+				"ThirdParty/WebpSDK/include/sharpyuv"
 			}
 			);
 			
@@ -50,6 +52,7 @@ public class StableDiffusionServices : ModuleRules
 				"JsonUtilities", 
 				"WebSockets",
 				"ImageWrapper",
+				"WebpSDK",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

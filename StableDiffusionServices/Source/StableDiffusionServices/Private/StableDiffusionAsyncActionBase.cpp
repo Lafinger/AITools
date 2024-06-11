@@ -24,7 +24,7 @@ void UStableDiffusionAsyncActionBase::SetReadyToDestroy()
 void UStableDiffusionAsyncActionBase::Cancel()
 {
 	bIsCancelAsyncAction = true;
-	UStableDiffusionStringOnlyOutput* CancelOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	UStableDiffusionOutputsBase* CancelOutput = NewObject<UStableDiffusionOutputsBase>(this);
 	CancelOutput->Message = TEXT("Cancel");
 	CancelDelegate.Broadcast(CancelOutput);
 
@@ -50,7 +50,7 @@ void UStableDiffusionWebSocketAsyncActionBase::Activate()
 	if(!Protocol.Equals(TEXT("wss")) && !Protocol.Equals(TEXT("ws")) && !Protocol.IsEmpty())
 	{
 		UE_LOG(LogSDWebSocketAsyncAction, Error, TEXT("ThreadID:%d, %s: Web socket protocol error!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Web socket protocol error.");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		return;
@@ -81,7 +81,7 @@ void UStableDiffusionWebSocketAsyncActionBase::InitWebSocket(const FString& InUr
 	if (InUrl.IsEmpty())
     {
 		UE_LOG(LogSDWebSocketAsyncAction, Error, TEXT("[TID]:%d, [%s]: %s"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__), TEXT("Init web socket url is empty!"));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Init web socket url is empty!");
     	ErrorDelegate.Broadcast(ErrorOutput);
     	SetReadyToDestroy();
@@ -101,7 +101,7 @@ void UStableDiffusionWebSocketAsyncActionBase::OnConnectedInternal()
 void UStableDiffusionWebSocketAsyncActionBase::OnConnectionErrorInternal(const FString& Error)
 {
 	UE_LOG(LogSDWebSocketAsyncAction, Error, TEXT("[TID]:%d, [%s]: %s"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__), TEXT("Web socket connection error!"));
-	UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 	ErrorOutput->Message = TEXT("Web socket connection error!");
 	ErrorDelegate.Broadcast(ErrorOutput);
 	SetReadyToDestroy();
@@ -109,8 +109,9 @@ void UStableDiffusionWebSocketAsyncActionBase::OnConnectionErrorInternal(const F
 
 void UStableDiffusionWebSocketAsyncActionBase::OnClosedInternal(int32 StatusCode, const FString& Reason, bool bWasClean)
 {
-	UE_LOG(LogSDWebSocketAsyncAction, Display, TEXT("[TID]:%d, [%s]: %s, StatusCode:%d, Reason:%s, bWasClean:%s"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__), TEXT("Close Web socket."), StatusCode, *Reason,  bWasClean ? TEXT("true") : TEXT("false"));
-	UStableDiffusionStringOnlyOutput* CompletedOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	UE_LOG(LogSDWebSocketAsyncAction, Display, TEXT("[TID]:%d, [%s]: %s, StatusCode:%d, Reason:%s, bWasClean:%s"), FPlatformTLS::GetCurrentThreadId(),
+		*FString(__FUNCTION__), TEXT("Close Web socket."), StatusCode, *Reason,  bWasClean ? TEXT("true") : TEXT("false"));
+	UStableDiffusionOutputsBase* CompletedOutput = NewObject<UStableDiffusionOutputsBase>(this);
 	CompletedOutput->Message = TEXT("Close Web socket.");
 	CompletedDelegate.Broadcast(CompletedOutput);
 	SetReadyToDestroy();
@@ -186,7 +187,7 @@ void UStableDiffusionHTTPAsyncActionBase::InitHTTP(const FString& InUrl, EHTTPRe
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), 0.0, *FString(__FUNCTION__), TEXT("Init Http url is empty!"));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Init Http url is empty!");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		SetReadyToDestroy();
@@ -226,7 +227,7 @@ void UStableDiffusionHTTPAsyncActionBase::OnRequestProgressInternal(FHttpRequest
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 		       FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 		       TEXT("Http request error!"));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Http request progress error!");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		SetReadyToDestroy();
@@ -250,7 +251,7 @@ void UStableDiffusionHTTPAsyncActionBase::OnProcessRequestCompleteInternal(FHttp
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 		       FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 		       TEXT("Http request error!"));
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Http request complete error!");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		SetReadyToDestroy();

@@ -3,7 +3,7 @@
 
 #include "ComfyUIGetTaskResultAsyncAction.h"
 
-#include "StableDiffusioUtilities.h"
+#include "StableDiffusionServicesUtilities.h"
 #include "StableDiffusionServicesSettings.h"
 #include "Interfaces/IHttpResponse.h"
 
@@ -56,18 +56,20 @@ void UComfyUIGetTaskResultAsyncAction::InitHTTP(const FString& InUrl, EHTTPReque
 
 void UComfyUIGetTaskResultAsyncAction::OnRequestProgressInternal(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
 {
-	FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
-	if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
-	{
-		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
-			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
-			   TEXT("Http request invalid!"));
-		return;
-	}
-
-	UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
-	ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
-	ProcessDelegate.Broadcast(ProcessOutput);
+	Super::OnRequestProgressInternal(Request, BytesSent, BytesReceived);
+	
+	// FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
+	// if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
+	// {
+	// 	UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
+	// 		   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
+	// 		   TEXT("Http request invalid!"));
+	// 	return;
+	// }
+	//
+	// UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	// ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
+	// ProcessDelegate.Broadcast(ProcessOutput);
 }
 
 void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
@@ -87,8 +89,8 @@ void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompleteInternal(FHttpReq
 	}
 
 	
-	bool bIsWebpImage = StableDiffusioUtilities::WebpFormatCheck(ResultBytes);
-	if(!bIsWebpImage)
+	UTexture2DDynamic* Texture2DDynamic = FWebpUtilities::ConvertWebpDataToTexture2DDynamic(ResultBytes.GetData(), ResultBytes.Num() * sizeof(uint8));
+	if(!Texture2DDynamic)
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
@@ -99,7 +101,7 @@ void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompleteInternal(FHttpReq
 	}
 	
 	UStableDiffusionGetTaskResultOutput* CompletedOutput = NewObject<UStableDiffusionGetTaskResultOutput>(this);
-	CompletedOutput->Texture2DDynamic = StableDiffusioUtilities::CreateDynamicTextureFromWebpImageData(ResultBytes);
+	CompletedOutput->Texture2DDynamic = Texture2DDynamic;
 	CompletedDelegate.Broadcast(CompletedOutput);
 	
 	SetReadyToDestroy();

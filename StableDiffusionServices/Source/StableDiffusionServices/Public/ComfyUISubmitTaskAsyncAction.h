@@ -46,7 +46,7 @@ public:
 		* @param InTimeout 连接的时长。
 	*/
 	UFUNCTION(BlueprintCallable, Category = "ComfyUI", meta = (DisplayName = "Submit task to server ComfyUI", BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
-	static UComfyUISubmitTaskAsyncAction* Connect(const UObject* WorldContextObject, int32 InTimeout = 120);
+	static UComfyUISubmitTaskAsyncAction* Connect(const UObject* WorldContextObject, const FString& InPrompt, int32 InTimeout = 120);
 
 	/** UStableDiffusionAsyncActionBase interface */
 	UFUNCTION(BlueprintCallable, Category = ComfyUIListenAsyncAction)

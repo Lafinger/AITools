@@ -23,31 +23,17 @@
 /*-------------------------------------- AsyncActionBase ------------------------------------*/
 class UStableDiffusionOnlyStringOutput;
 
-UCLASS(Abstract)
+UCLASS(BlueprintType)
 class UStableDiffusionOutputsBase : public UObject
 {
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintPure, meta = (DeterminesOutputType = "ClassType", DynamicOutputParam = "Output"))
 	void GetSpecifiedOutput(TSubclassOf<UStableDiffusionOutputsBase> ClassType, UStableDiffusionOutputsBase*& Output){};
-};
-
-UCLASS(BlueprintType)
-class UStableDiffusionStringOnlyOutput final : public UStableDiffusionOutputsBase
-{
-	GENERATED_BODY()
-	
-public:
-	UStableDiffusionStringOnlyOutput(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get())
-	: Super(ObjectInitializer)
-	{
-		
-	};
 	
 	UPROPERTY(BlueprintReadOnly)
 	FString Message;
 };
-
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStableDiffusionBaseDelegate, UStableDiffusionOutputsBase*, Output);

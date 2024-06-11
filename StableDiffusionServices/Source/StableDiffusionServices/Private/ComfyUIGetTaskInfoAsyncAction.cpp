@@ -61,18 +61,18 @@ void UComfyUIGetTaskInfoAsyncAction::OnRequestProgressInternal(FHttpRequestPtr R
 {
 	Super::OnRequestProgressInternal(Request, BytesSent, BytesReceived);
 
-	FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
-	if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
-	{
-		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
-			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
-			   TEXT("Http request invalid!"));
-		return;
-	}
-
-	UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
-	ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
-	ProcessDelegate.Broadcast(ProcessOutput);
+	// FHttpResponsePtr HttpResponsePtr = Request->GetResponse();
+	// if(!HttpResponsePtr || !HttpResponsePtr.IsValid())
+	// {
+	// 	UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
+	// 		   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
+	// 		   TEXT("Http request invalid!"));
+	// 	return;
+	// }
+	//
+	// UStableDiffusionStringOnlyOutput* ProcessOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+	// ProcessOutput->Message = HttpResponsePtr->GetContentAsString();
+	// ProcessDelegate.Broadcast(ProcessOutput);
 }
 
 void UComfyUIGetTaskInfoAsyncAction::OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
@@ -99,7 +99,7 @@ void UComfyUIGetTaskInfoAsyncAction::OnProcessRequestCompleteInternal(FHttpReque
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Convert task info to FJsonObject error!"));
 		
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Convert task info to FJsonObject error!");
 		ErrorDelegate.Broadcast(ErrorOutput);
 		
@@ -108,22 +108,21 @@ void UComfyUIGetTaskInfoAsyncAction::OnProcessRequestCompleteInternal(FHttpReque
 	}
 	
 	TSharedPtr<FJsonObject> ResultTaskObj = ResultJsonObj->GetObjectField(PromptID);
-	if(!ResultTaskObj || !ResultTaskObj.IsValid())
+	if(!ResultTaskObj || !ResultTaskObj.IsValid() || ResultTaskObj->Values.IsEmpty())
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s %s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Cannot find task with"), *PromptID);
-		UStableDiffusionStringOnlyOutput* ErrorOutput = NewObject<UStableDiffusionStringOnlyOutput>(this);
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = FString(TEXT("Cannot find task with ")) + PromptID;
 		ErrorDelegate.Broadcast(ErrorOutput);
+
+		SetReadyToDestroy();
+		return;
 	}
-
-	// Get result and parsing
-	TArray<TSharedPtr<FJsonValue>> ResultPrompts = ResultTaskObj->GetArrayField(TEXT("prompt")); // todo
 	
+	// Get result and parsing
 	TSharedPtr<FJsonObject> ResultOutput = ResultTaskObj->GetObjectField(TEXT("outputs"));
-	TSharedPtr<FJsonObject> ResultStatus = ResultTaskObj->GetObjectField(TEXT("status")); // todo
-
 	TSharedPtr<FJsonObject> Result9 = ResultOutput->GetObjectField(TEXT("9"));
 	TArray<TSharedPtr<FJsonValue>> ResultImagesInfos = Result9->GetArrayField(TEXT("images"));
 
