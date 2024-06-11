@@ -51,7 +51,7 @@ private:
 	/** UStableDiffusionHTTPAsyncActionBase interface */
 	virtual void InitHTTP(const FString& InUrl, EHTTPRequestType InRequestType, const TMap<FString, FString>& InHeaders, const FString& InRequestBody, int32 InTimeout = 120) override;
 	virtual void OnRequestProgressInternal(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived) override;
-	virtual void OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully) override;
+	virtual void OnProcessRequestCompletedInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully) override;
 
 	
 };

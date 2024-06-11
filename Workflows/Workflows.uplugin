@@ -41,7 +41,19 @@
 			"Enabled": true
 		},
 		{
+			"Name": "ChatModels",
+			"Enabled": true
+		},
+		{
 			"Name": "IVXunFeiSpeech",
+			"Enabled": true
+		},
+		{
+			"Name": "OpenAIServices",
+			"Enabled": true
+		},
+		{
+			"Name": "StableDiffusionServices",
 			"Enabled": true
 		}
 	]

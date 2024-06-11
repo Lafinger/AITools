@@ -165,7 +165,7 @@ void UStableDiffusionHTTPAsyncActionBase::Activate()
 	HttpRequest->SetTimeout(Timeout);
 	// HttpRequest->OnHeaderReceived().BindUObject(this, &UStableDiffusionHTTPAsyncActionBase::OnHeaderReceivedInternal);
 	HttpRequest->OnRequestProgress().BindUObject(this, &UStableDiffusionHTTPAsyncActionBase::OnRequestProgressInternal);
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UStableDiffusionHTTPAsyncActionBase::OnProcessRequestCompleteInternal);
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UStableDiffusionHTTPAsyncActionBase::OnProcessRequestCompletedInternal);
 	HttpRequest->ProcessRequest();
 }
 
@@ -242,21 +242,10 @@ void UStableDiffusionHTTPAsyncActionBase::OnRequestProgressInternal(FHttpRequest
 	// }
 }
 
-void UStableDiffusionHTTPAsyncActionBase::OnProcessRequestCompleteInternal(FHttpRequestPtr Request,
+void UStableDiffusionHTTPAsyncActionBase::OnProcessRequestCompletedInternal(FHttpRequestPtr Request,
                                                                            FHttpResponsePtr Response,
                                                                            bool bConnectedSuccessfully)
 {
-	if (!Request || !Request.IsValid() || !Response || !Response.IsValid() || !bConnectedSuccessfully || Response->GetResponseCode() != 200)
-	{
-		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
-		       FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
-		       TEXT("Http request error!"));
-		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
-		ErrorOutput->Message = TEXT("Http request complete error!");
-		ErrorDelegate.Broadcast(ErrorOutput);
-		SetReadyToDestroy();
-		return;
-	}
 }
 
 /*-------------------------------------- HTTP ------------------------------------*/

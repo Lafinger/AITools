@@ -144,7 +144,7 @@ protected:
 	// virtual void OnHeaderReceivedInternal(FHttpRequestPtr Request, const FString& HeaderName,
 	//                                       const FString& NewHeaderValue);
 	virtual void OnRequestProgressInternal(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
-	virtual void OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response,
+	virtual void OnProcessRequestCompletedInternal(FHttpRequestPtr Request, FHttpResponsePtr Response,
 	                                              bool bConnectedSuccessfully);
 
 	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest;

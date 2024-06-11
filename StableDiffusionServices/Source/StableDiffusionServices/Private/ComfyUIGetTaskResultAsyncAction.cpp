@@ -72,9 +72,27 @@ void UComfyUIGetTaskResultAsyncAction::OnRequestProgressInternal(FHttpRequestPtr
 	// ProcessDelegate.Broadcast(ProcessOutput);
 }
 
-void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompleteInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompletedInternal(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	Super::OnProcessRequestCompleteInternal(Request, Response, bConnectedSuccessfully);
+	Super::OnProcessRequestCompletedInternal(Request, Response, bConnectedSuccessfully);
+
+	if(bIsCancelAsyncAction)
+	{
+		SetReadyToDestroy();
+		return;
+	}
+
+	if (!Request || !Request.IsValid() || !Response || !Response.IsValid() || !bConnectedSuccessfully || Response->GetResponseCode() != 200)
+	{
+		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
+			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
+			   TEXT("Http request error!"));
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
+		ErrorOutput->Message = TEXT("Http request complete error!");
+		ErrorDelegate.Broadcast(ErrorOutput);
+		SetReadyToDestroy();
+		return;
+	}
 
 	// Convert FString to FJsonObject
 	TArray<uint8> ResultBytes = Response->GetContent();

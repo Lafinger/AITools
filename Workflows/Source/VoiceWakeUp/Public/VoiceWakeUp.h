@@ -3,9 +3,19 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogFVoiceWakeUpModule, Display, All);
+
 class FVoiceWakeUpModule : public IModuleInterface
 {
 public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
+
+#ifdef VOICEWAKEUP_WHITELISTED_BINARIES
+private:
+    void LoadRuntimeLibraries();
+    void UnloadRuntimeLibraries();
+
+    TArray<void*> RuntimeLibraries;
+#endif
 };
