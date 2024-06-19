@@ -25,7 +25,7 @@ UComfyUIGetTaskInfoAsyncAction* UComfyUIGetTaskInfoAsyncAction::Connect(const UO
 		return nullptr;
 	}
 
-	FString GetTaskInfoUrl = Settings->ComfyUISettings.GetTaskInfo();
+	FString GetTaskInfoUrl = Settings->ComfyUISettings.GetTaskInfoUrl();
 	if(GetTaskInfoUrl.IsEmpty())
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("ThreadID:%d, %s: ComfyUI get task info url is empty!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
@@ -152,6 +152,7 @@ void UComfyUIGetTaskInfoAsyncAction::OnProcessRequestCompletedInternal(FHttpRequ
 
 	
 	UStableDiffusionGetTaskInfoOutput* CompletedOutput = NewObject<UStableDiffusionGetTaskInfoOutput>(this);
+	CompletedOutput->Message = ResultString; // 保留原始信息
 	CompletedOutput->PromptID = PromptID;
 	CompletedOutput->ImageFileName = ResultImageFileName;
 	CompletedOutput->Type = ResultType;

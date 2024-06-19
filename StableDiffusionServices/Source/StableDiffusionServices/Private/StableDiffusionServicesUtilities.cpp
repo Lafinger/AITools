@@ -4,6 +4,7 @@
 
 #include "decode.h"
 #include "encode.h"
+#include "StableDiffusionServicesSettings.h"
 #include "Engine/Texture2DDynamic.h"
 
 bool FWebpUtilities::HasWebp(const uint8* Scr, const SIZE_T& Size)
@@ -118,10 +119,19 @@ UTexture2DDynamic* FWebpUtilities:: ConvertWebpDataToTexture2DDynamic(const uint
 
 FString FComfyUIUtilities::GetWorkflowAPIStringWithPrompt(const FString& InPrompt)
 {
-	FString WorkflowAPIFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "AITools/StableDiffusionServices/Resources/ComfyUI/API/workflow_api.json";
+	const UStableDiffusionServicesSettings* Settings = GetDefault<UStableDiffusionServicesSettings>();
+	if(!ensureAlwaysMsgf(Settings != nullptr, TEXT("Get stable diffusion services settings error!")))
+	{
+		return FString();
+	}
+	
+	FString WorkflowAPILocalPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "AITools/StableDiffusionServices/Resources/ComfyUI/API/";
+	FString WorkflowAPIFileName = Settings->ComfyUISettings.WorkflowAPIFileName;
+	FString WorkflowAPIFilePath = WorkflowAPILocalPath + WorkflowAPIFileName;
+	
 	FString Result;
 	bool bIsLoadSuccess = FFileHelper::LoadFileToString(Result, *WorkflowAPIFilePath);
-	if(!ensureAlwaysMsgf(bIsLoadSuccess || !Result.IsEmpty(), TEXT("Cannot find workflow_api.json.")))
+	if(!ensureAlwaysMsgf(bIsLoadSuccess || !Result.IsEmpty(), TEXT("Cannot find comfyUI workflow api file!")))
 	{
 		return Result;
 	}

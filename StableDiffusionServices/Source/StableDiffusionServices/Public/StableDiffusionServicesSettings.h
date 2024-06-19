@@ -17,10 +17,16 @@ struct FComfyUISettings
 	UPROPERTY(EditAnywhere, config, Category = "ComfyUI Settings")
 	int32 Port;
 
-	FORCEINLINE FString Listen() const { return "ws://" + Host + ":" + FString::FromInt(Port) + "/ws"; }
-	FORCEINLINE FString SubmitTask() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/prompt"; }
-	FORCEINLINE FString GetTaskInfo() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/history"; }
-	FORCEINLINE FString GetTaskResult() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/view"; }
+	UPROPERTY(EditAnywhere, config, Category = "ComfyUI Settings")
+	FString WorkflowFileName;
+
+	UPROPERTY(EditAnywhere, config, Category = "ComfyUI Settings")
+	FString WorkflowAPIFileName;
+
+	FORCEINLINE FString GetListenUrl() const { return "ws://" + Host + ":" + FString::FromInt(Port) + "/ws"; }
+	FORCEINLINE FString GetSubmitTaskUrl() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/prompt"; }
+	FORCEINLINE FString GetTaskInfoUrl() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/history"; }
+	FORCEINLINE FString GetTaskViewUrl() const { return "http://" + Host + ":" + FString::FromInt(Port) + "/view"; }
 };
 
 /**

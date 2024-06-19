@@ -45,19 +45,7 @@ UStableDiffusionWebSocketAsyncActionBase::UStableDiffusionWebSocketAsyncActionBa
 
 void UStableDiffusionWebSocketAsyncActionBase::Activate()
 {
-	FString ProtocolTemp = Url.Left(3);
-	FString Protocol = ProtocolTemp.Replace(*FString(TEXT(":")), *FString(TEXT("")));
-	if(!Protocol.Equals(TEXT("wss")) && !Protocol.Equals(TEXT("ws")) && !Protocol.IsEmpty())
-	{
-		UE_LOG(LogSDWebSocketAsyncAction, Error, TEXT("ThreadID:%d, %s: Web socket protocol error!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
-		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
-		ErrorOutput->Message = TEXT("Web socket protocol error.");
-		ErrorDelegate.Broadcast(ErrorOutput);
-		return;
-	}
-	
-	WebSocket = FWebSocketsModule::Get().CreateWebSocket(Url, Protocol, Headers);
-	check(WebSocket && "Create web socket error!");
+	WebSocket = FWebSocketsModule::Get().CreateWebSocket(Url, Protocols, Headers);
 
 	WebSocket->OnConnected().AddUObject(this, &UStableDiffusionWebSocketAsyncActionBase::OnConnectedInternal);
 	WebSocket->OnConnectionError().AddUObject(this, &UStableDiffusionWebSocketAsyncActionBase::OnConnectionErrorInternal);
@@ -76,7 +64,7 @@ void UStableDiffusionWebSocketAsyncActionBase::Cancel()
 	UE_LOG(LogSDWebSocketAsyncAction, Warning, TEXT("[TID]:%d, [%s]: %s"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__), TEXT("Cancel web socket!"));
 }
 
-void UStableDiffusionWebSocketAsyncActionBase::InitWebSocket(const FString& InUrl, const TMap<FString, FString>& InHeaders)
+void UStableDiffusionWebSocketAsyncActionBase::InitWebSocket(const FString& InUrl, const TArray<FString>& InProtocols, const TMap<FString, FString>& InHeaders)
 {
 	if (InUrl.IsEmpty())
     {
@@ -90,6 +78,7 @@ void UStableDiffusionWebSocketAsyncActionBase::InitWebSocket(const FString& InUr
 	
 	Url = InUrl;
 	Headers = InHeaders;
+	Protocols = InProtocols;
 }
 
 

@@ -9,20 +9,31 @@ void UStableDiffusionServicesSubsystem::Initialize(FSubsystemCollectionBase& Col
 {
 	Super::Initialize(Collection);
 
-	UE_LOG(LogStableDiffusionServicesSubsystem, Display, TEXT("ThreadID:%d, %s: Stable diffusion services subsystem initialized."), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
-
-	ClientID = FGuid::NewGuid();
+	InitComfyUIClientID();
+	UE_LOG(LogStableDiffusionServicesSubsystem, Display, TEXT("ThreadID:%d, %s: Stable diffusion services subsystem initialized."), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__))
 }
 
 void UStableDiffusionServicesSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 	
-	ClientID.Invalidate();
+	ComfyUIClientID.Invalidate();
+	ComfyUIClientIDString.Empty();
 	UE_LOG(LogStableDiffusionServicesSubsystem, Display, TEXT("ThreadID:%d, %s: Stable diffusion services subsystem deinitialized."), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
 }
 
-FString UStableDiffusionServicesSubsystem::GetClientID()
+void UStableDiffusionServicesSubsystem::InitComfyUIClientID()
 {
-	return ClientID.ToString();
+	if(ComfyUIClientID.IsValid() && !ComfyUIClientIDString.IsEmpty())
+	{
+		UE_LOG(LogStableDiffusionServicesSubsystem, Display, TEXT("ThreadID:%d, %s: ComfyUI client id has been Initialized."), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
+		return;
+	}
+	ComfyUIClientID = FGuid::NewGuid();
+	ComfyUIClientIDString = ComfyUIClientID.ToString(EGuidFormats::DigitsWithHyphens).ToLower();
+}
+
+FString UStableDiffusionServicesSubsystem::GetComfyUIClientID()
+{
+	return ComfyUIClientIDString;
 }

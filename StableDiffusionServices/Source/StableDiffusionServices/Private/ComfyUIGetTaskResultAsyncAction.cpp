@@ -20,7 +20,7 @@ UComfyUIGetTaskResultAsyncAction* UComfyUIGetTaskResultAsyncAction::Connect(cons
 		return nullptr;
 	}
 
-	FString GetTaskResultUrl = Settings->ComfyUISettings.GetTaskResult();
+	FString GetTaskResultUrl = Settings->ComfyUISettings.GetTaskViewUrl();
 	if(GetTaskResultUrl.IsEmpty())
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("ThreadID:%d, %s: ComfyUI get task result url is empty!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
@@ -90,6 +90,7 @@ void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompletedInternal(FHttpRe
 		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
 		ErrorOutput->Message = TEXT("Http request complete error!");
 		ErrorDelegate.Broadcast(ErrorOutput);
+		
 		SetReadyToDestroy();
 		return;
 	}
@@ -101,6 +102,9 @@ void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompletedInternal(FHttpRe
 		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Task result is empty!"));
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
+		ErrorOutput->Message = TEXT("Task result is empty!");
+		ErrorDelegate.Broadcast(ErrorOutput);
 
 		SetReadyToDestroy();
 		return;
@@ -113,12 +117,16 @@ void UComfyUIGetTaskResultAsyncAction::OnProcessRequestCompletedInternal(FHttpRe
 		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Result is not webp image!"));
-
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
+		ErrorOutput->Message = TEXT("Result is not webp image!");
+		ErrorDelegate.Broadcast(ErrorOutput);
+		
 		SetReadyToDestroy();
 		return;
 	}
 	
 	UStableDiffusionGetTaskResultOutput* CompletedOutput = NewObject<UStableDiffusionGetTaskResultOutput>(this);
+	CompletedOutput->Message = Response->GetContentAsString(); // 保留原始信息
 	CompletedOutput->Texture2DDynamic = Texture2DDynamic;
 	CompletedDelegate.Broadcast(CompletedOutput);
 	

@@ -22,9 +22,13 @@ public:
 	virtual void Deinitialize() override;
 	
 public:
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stable Diffusion Services")
-	FString GetClientID();
+	UFUNCTION(BlueprintCallable, Category = "Stable Diffusion Services")
+	void InitComfyUIClientID();
+	
+	UFUNCTION(BlueprintPure, Category = "Stable Diffusion Services")
+	FString GetComfyUIClientID();
 
 private:
-	FGuid ClientID;;
+	FGuid ComfyUIClientID;
+	FString ComfyUIClientIDString;
 };

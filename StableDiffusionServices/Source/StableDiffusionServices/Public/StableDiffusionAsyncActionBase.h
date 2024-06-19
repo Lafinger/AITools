@@ -30,9 +30,10 @@ class UStableDiffusionOutputsBase : public UObject
 public:
 	UFUNCTION(BlueprintPure, meta = (DeterminesOutputType = "ClassType", DynamicOutputParam = "Output"))
 	void GetSpecifiedOutput(TSubclassOf<UStableDiffusionOutputsBase> ClassType, UStableDiffusionOutputsBase*& Output){};
-	
+
+	/* 保存了客户端信息：报错、取消等，或者保存了服务器发过来的原生信息 */
 	UPROPERTY(BlueprintReadOnly)
-	FString Message;
+	FString Message; 
 };
 
 
@@ -97,15 +98,16 @@ public:
 
 protected:
 	// Must execute before Active()
-	virtual void InitWebSocket(const FString& InUrl, const TMap<FString, FString>& InHeaders);
+	virtual void InitWebSocket(const FString& InUrl, const TArray<FString>& InProtocols = TArray<FString>(), const TMap<FString, FString>& InHeaders = TMap<FString, FString>());
 	virtual void OnConnectedInternal();
 	virtual void OnConnectionErrorInternal(const FString& Error);
 	virtual void OnClosedInternal(int32 StatusCode, const FString& Reason, bool bWasClean);
 	virtual void OnMessageInternal(const FString& MessageString);
 
+private:
 	TSharedPtr<IWebSocket> WebSocket;
-
 	FString Url;
+	TArray<FString> Protocols;
 	TMap<FString, FString> Headers;
 };
 

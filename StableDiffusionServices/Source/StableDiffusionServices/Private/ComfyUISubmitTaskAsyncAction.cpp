@@ -23,7 +23,7 @@ UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObj
 		return nullptr;
 	}
 
-	FString SubmitTaskUrl = Settings->ComfyUISettings.SubmitTask();
+	FString SubmitTaskUrl = Settings->ComfyUISettings.GetSubmitTaskUrl();
 	if(SubmitTaskUrl.IsEmpty())
 	{
 		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
@@ -91,7 +91,7 @@ UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObj
 
 	// Construct request body
 	FString ClientIDName = TEXT("client_id");
-	FString ClientIDValue = StableDiffusionServicesSubsystem->GetClientID();
+	FString ClientIDValue = StableDiffusionServicesSubsystem->GetComfyUIClientID();
 	PromptJsonObj->SetStringField(ClientIDName, ClientIDValue);
 
 	FString PromptName = TEXT("prompt");
@@ -183,7 +183,10 @@ void UComfyUISubmitTaskAsyncAction::OnProcessRequestCompletedInternal(FHttpReque
 		UE_LOG(LogSDHTTPAsyncAction, Warning, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
 			   FPlatformTLS::GetCurrentThreadId(), Request->GetElapsedTime(), *FString(__FUNCTION__),
 			   TEXT("Submit task result is empty!"));
-
+		UStableDiffusionOutputsBase* ErrorOutput = NewObject<UStableDiffusionOutputsBase>(this);
+		ErrorOutput->Message = TEXT("Submit task result is empty!");
+		ErrorDelegate.Broadcast(ErrorOutput);
+		
 		SetReadyToDestroy();
 		return;
 	}
@@ -209,6 +212,7 @@ void UComfyUISubmitTaskAsyncAction::OnProcessRequestCompletedInternal(FHttpReque
 
 	
 	UStableDiffusionSubmitTaskOutput* CompletedOutput = NewObject<UStableDiffusionSubmitTaskOutput>(this);
+	CompletedOutput->Message = ResultString; // 保留原始信息
 	CompletedOutput->PromptID = ResultPromptID;
 	CompletedOutput->Number = ResultNumber;
 	CompletedDelegate.Broadcast(CompletedOutput);
