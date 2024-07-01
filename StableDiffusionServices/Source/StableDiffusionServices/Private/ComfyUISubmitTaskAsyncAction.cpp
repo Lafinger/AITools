@@ -7,6 +7,7 @@
 #include "StableDiffusionServicesSubsystem.h"
 #include "StableDiffusionServicesUtilities.h"
 #include "Interfaces/IHttpResponse.h"
+#include "Kismet/GameplayStatics.h"
 
 UComfyUISubmitTaskAsyncAction::UComfyUISubmitTaskAsyncAction(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
 {
@@ -32,14 +33,9 @@ UComfyUISubmitTaskAsyncAction* UComfyUISubmitTaskAsyncAction::Connect(const UObj
 		return nullptr;
 	}
 
-	UStableDiffusionServicesSubsystem* StableDiffusionServicesSubsystem = GEngine->GetEngineSubsystem<UStableDiffusionServicesSubsystem>();
-	if(!StableDiffusionServicesSubsystem)
-	{
-		UE_LOG(LogSDHTTPAsyncAction, Error, TEXT("[TID]:%d, [ET]:%f seconds, [%s]:%s"),
-			   FPlatformTLS::GetCurrentThreadId(), 0.0, *FString(__FUNCTION__),
-			   TEXT("ComfyUI get StableDiffusionServicesSubsystem error!"));
-		return nullptr;
-	}
+	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	check(GameInstance && "Canont find game instance!");
+	UStableDiffusionServicesSubsystem* StableDiffusionServicesSubsystem = GameInstance->GetSubsystem<UStableDiffusionServicesSubsystem>();
 	
 	// FString AbsoluteFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir()) + "AITools/VoiceWakeUp/Source/ThirdParty/VoiceWakeUpSdk/res/wakeupresource.jet";
 	// AbsoluteFilePath = AbsoluteFilePath.Replace(TEXT("/"), TEXT("\\\\"));

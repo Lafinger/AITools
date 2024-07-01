@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTaskErrorDelegate, const FString&, 
  * 语音合成子系统，使用了阻塞式队列（一个一个语音任务合成，队列起缓冲作用），目前不支持并发队列
  */
 UCLASS()
-class VOICESYNTHESIS_API UVoiceSynthesisSubsystem : public UEngineSubsystem
+class VOICESYNTHESIS_API UVoiceSynthesisSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:

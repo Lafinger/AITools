@@ -29,7 +29,7 @@ public:
  * 
  */
 UCLASS()
-class CHATMODELS_API UChatModelsSubsystem : public UEngineSubsystem
+class CHATMODELS_API UChatModelsSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

@@ -13,7 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTaskCompletedDelegate);
  * 语音播放子系统，目前没有作用，语音播放的具体实现在VoicePlayerComponent
  */
 UCLASS()
-class VOICEPLAYER_API UVoicePlayerSubsystem : public UEngineSubsystem
+class VOICEPLAYER_API UVoicePlayerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

@@ -11,7 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWakeUpFailedDelegate, int, ErrorCod
 
 /** 同一时刻只能开启一个语音唤醒，不允许并发 */
 UCLASS()
-class VOICEWAKEUP_API UVoiceWakeUpSubsystem :public UEngineSubsystem {
+class VOICEWAKEUP_API UVoiceWakeUpSubsystem :public UGameInstanceSubsystem
+{
 
 	GENERATED_BODY()
 

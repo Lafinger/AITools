@@ -41,6 +41,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "IVDataAnalysis",
+			"Enabled": true
+		},
+		{
 			"Name": "ChatModels",
 			"Enabled": true
 		},

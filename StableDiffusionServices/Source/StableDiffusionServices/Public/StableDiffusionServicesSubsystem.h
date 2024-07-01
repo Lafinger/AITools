@@ -13,7 +13,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogStableDiffusionServicesSubsystem, Log, All);
  * 
  */
 UCLASS(BlueprintType)
-class STABLEDIFFUSIONSERVICES_API UStableDiffusionServicesSubsystem : public UEngineSubsystem
+class STABLEDIFFUSIONSERVICES_API UStableDiffusionServicesSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

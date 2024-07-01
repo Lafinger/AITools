@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 419230186244163,
+      "seed": 1122927921405283,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -24,20 +24,13 @@
         0
       ]
     },
-    "class_type": "KSampler",
-    "_meta": {
-      "title": "KSampler"
-    }
+    "class_type": "KSampler"
   },
   "4": {
     "inputs": {
-      "ckpt_name": "动漫2.5drealcartoonPixar_v9.safetensors",
-      "+": null
+      "ckpt_name": "动漫2.5drealcartoonPixar_v9.safetensors"
     },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
-    }
+    "class_type": "CheckpointLoaderSimple"
   },
   "5": {
     "inputs": {
@@ -45,10 +38,7 @@
       "height": 512,
       "batch_size": 1
     },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "Empty Latent Image"
-    }
+    "class_type": "EmptyLatentImage"
   },
   "6": {
     "inputs": {
@@ -58,10 +48,7 @@
         1
       ]
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
+    "class_type": "CLIPTextEncode"
   },
   "7": {
     "inputs": {
@@ -71,10 +58,7 @@
         1
       ]
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
+    "class_type": "CLIPTextEncode"
   },
   "8": {
     "inputs": {
@@ -87,10 +71,7 @@
         2
       ]
     },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
-    }
+    "class_type": "VAEDecode"
   },
   "9": {
     "inputs": {
@@ -100,17 +81,13 @@
         0
       ]
     },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "Save Image"
-    }
+    "class_type": "SaveImage"
   },
   "10": {
     "inputs": {
       "lora_name": "细节detail_slider_v4.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
-      "+": null,
       "model": [
         "4",
         0
@@ -120,9 +97,6 @@
         1
       ]
     },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "Load LoRA"
-    }
+    "class_type": "LoraLoader"
   }
 }

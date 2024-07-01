@@ -5,6 +5,7 @@
 
 #include "StableDiffusionServicesSettings.h"
 #include "StableDiffusionServicesSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
 UComfyUIListenAsyncAction::UComfyUIListenAsyncAction(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer), StableDiffusionListenOutput(nullptr)
 {
@@ -27,7 +28,10 @@ UComfyUIListenAsyncAction* UComfyUIListenAsyncAction::Connect(const UObject* Wor
 		return nullptr;
 	}
 
-	UStableDiffusionServicesSubsystem* StableDiffusionServicesSubsystem = GEngine->GetEngineSubsystem<UStableDiffusionServicesSubsystem>();
+	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
+	check(GameInstance && "Canont find game instance!");
+	UStableDiffusionServicesSubsystem* StableDiffusionServicesSubsystem = GameInstance->GetSubsystem<UStableDiffusionServicesSubsystem>();
+	
 	if(!StableDiffusionServicesSubsystem)
 	{
 		UE_LOG(LogSDWebSocketAsyncAction, Error, TEXT("ThreadID:%d, %s: ComfyUI get StableDiffusionServicesSubsystem error!"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));

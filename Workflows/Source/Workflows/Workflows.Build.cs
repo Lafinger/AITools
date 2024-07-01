@@ -38,6 +38,8 @@ public class Workflows : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"IVRuntimeDataTable",
+				"IVXunFeiSpeech",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
