@@ -11,7 +11,7 @@ UComfyUIListenAsyncAction::UComfyUIListenAsyncAction(const FObjectInitializer& O
 {
 }
 
-UComfyUIListenAsyncAction* UComfyUIListenAsyncAction::Connect(const UObject* WorldContextObject)
+UComfyUIListenAsyncAction* UComfyUIListenAsyncAction::Connect(const UObject* WorldContextObject, const TArray<FString>& InProtocols, const TMap<FString, FString>& InHeaders)
 {
 	const UStableDiffusionServicesSettings* Settings = GetDefault<UStableDiffusionServicesSettings>();
 	if(!Settings)
@@ -49,7 +49,7 @@ UComfyUIListenAsyncAction* UComfyUIListenAsyncAction::Connect(const UObject* Wor
 	
 	ThisClass* const AsyncAction = NewObject<ThisClass>();
 	AsyncAction->RegisterWithGameInstance(WorldContextObject);
-	AsyncAction->InitWebSocket(ListenFullUrl);
+	AsyncAction->InitWebSocket(ListenFullUrl, InProtocols, InHeaders);
 	
 	AsyncAction->StableDiffusionListenOutput = NewObject<UStableDiffusionListenOutput>(AsyncAction);
 	

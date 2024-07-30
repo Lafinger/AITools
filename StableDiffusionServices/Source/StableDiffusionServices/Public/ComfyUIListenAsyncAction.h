@@ -64,9 +64,11 @@ public:
 	/**
 		* 帮助节点轻松连接到服务器并处理连接事件。
 		* @param WorldContextObject 代表了函数调用所处的世界。
+		* @param InProtocols 链接WebSocket的协议
+		* @param InHeaders 链接WebSocket的Headers
 	*/
-	UFUNCTION(BlueprintCallable, Category = "ComfyUI", meta = (DisplayName = "Listen to server ComfyUI", AutoCreateRefTerm = "Headers", BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
-	static UComfyUIListenAsyncAction* Connect(const UObject* WorldContextObject);
+	UFUNCTION(BlueprintCallable, Category = "ComfyUI", meta = (DisplayName = "Listen to server ComfyUI", BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", HidePin = "WorldContextObject", AutoCreateRefTerm = "InProtocols,InHeaders"))
+	static UComfyUIListenAsyncAction* Connect(const UObject* WorldContextObject, const TArray<FString>& InProtocols, const TMap<FString, FString>& InHeaders);
 
 	/** UStableDiffusionAsyncActionBase interface */
 	UFUNCTION(BlueprintCallable, Category = "ComfyUI")
