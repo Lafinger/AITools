@@ -3,8 +3,6 @@
 
 #include "VoiceRecognitionAsyncAction.h"
 
-DEFINE_LOG_CATEGORY(LogWebSocketRequestAsyncAction);
-
 UVoiceRecognitionAsyncAction::UVoiceRecognitionAsyncAction(const FObjectInitializer& ObjectInitializer)
 : ReceiveMessageBase(nullptr)
 {

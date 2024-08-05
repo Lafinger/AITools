@@ -49,10 +49,6 @@ public:
 	/** 停止语音识别 */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Voice Recognition", meta = (WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
 	void Stop(const UObject* WorldContextObject);
-
-
-	UFUNCTION()
-	void OnRecordStart(const float EnvelopeValue, USoundWave* SoundWave, const FString FilePath);
 	
 	UFUNCTION()
 	void OnRecording(const float EnvelopeValue, USoundWave* SoundWave, const FString FilePath);

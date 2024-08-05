@@ -8,6 +8,13 @@
 
 DEFINE_LOG_CATEGORY(LogAzSpeechAwakenerSubsystem)
 
+UAzSpeechAwakenerSubsystem::UAzSpeechAwakenerSubsystem(const FObjectInitializer& ObjectInitializer)
+: Model(nullptr)
+, SpeechRecognizer(nullptr)
+, bIsRunning(false)
+{
+}
+
 void UAzSpeechAwakenerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -20,7 +27,14 @@ void UAzSpeechAwakenerSubsystem::Deinitialize()
 
 bool UAzSpeechAwakenerSubsystem::StartKeywordRecognitionAsync()
 {
-	AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this]()
+	if(bIsRunning)
+	{
+		UE_LOG(LogAzSpeechAwakenerSubsystem, Warning, TEXT("SpeechRecognizer is running !"));
+		return false;
+	}
+	bIsRunning = true;
+	
+	AsyncTask(ENamedThreads::AnyNormalThreadNormalTask, [this]()
 	{
 		// 加载自定义关键词模型
 		const UAzSpeechSettings* AzSpeechSettings = UAzSpeechSettings::Get();
@@ -64,22 +78,25 @@ bool UAzSpeechAwakenerSubsystem::StartKeywordRecognitionAsync()
 					FString RecognizedText = UTF8_TO_TCHAR(e.Result->Text.c_str());
 					UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Recognized text : %s"), *RecognizedText);
 
+
+					recognition_end_promise.set_value();
+					
 					AsyncTask(ENamedThreads::GameThread, [this]()
 					{
 						this->AwakenerTriggerDelegate.Broadcast();
 					});
 					
-					recognition_end_promise.set_value();
+					
 				}
-				else if (e.Result->Reason == MicrosoftSpeech::ResultReason::RecognizedSpeech)
-				{
-					FString RecognizedText = UTF8_TO_TCHAR(e.Result->Text.c_str());
-					UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Recognized keyword : %s"), *RecognizedText);
-				}
-				else if (e.Result->Reason == MicrosoftSpeech::ResultReason::NoMatch)
-				{
-					UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Speech could not be recognized"));
-				}
+				// else if (e.Result->Reason == MicrosoftSpeech::ResultReason::RecognizedSpeech)
+				// {
+				// 	FString RecognizedText = UTF8_TO_TCHAR(e.Result->Text.c_str());
+				// 	UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Recognized keyword : %s"), *RecognizedText);
+				// }
+				// else if (e.Result->Reason == MicrosoftSpeech::ResultReason::NoMatch)
+				// {
+				// 	UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Speech could not be recognized"));
+				// }
 			});
 
 		// this->SpeechRecognizer->Canceled.Connect([](const MicrosoftSpeech::SpeechRecognitionCanceledEventArgs& e)
@@ -92,19 +109,21 @@ bool UAzSpeechAwakenerSubsystem::StartKeywordRecognitionAsync()
 		// 		}
 		// 	});
 
-		this->SpeechRecognizer->SessionStarted.Connect([this](const MicrosoftSpeech::SessionEventArgs& e)
-			{
-				FString SessionId = UTF8_TO_TCHAR(e.SessionId.c_str());
-				UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Session started, SessionId = %s"), *SessionId);
-			});
-		
-		this->SpeechRecognizer->SessionStopped.Connect([this](const MicrosoftSpeech::SessionEventArgs& e)
-			{
-				FString SessionId = UTF8_TO_TCHAR(e.SessionId.c_str());
-				UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Session Stopped, SessionId = %s"), *SessionId);
-			});
+		// this->SpeechRecognizer->SessionStarted.Connect([this](const MicrosoftSpeech::SessionEventArgs& e)
+		// 	{
+		// 		FString SessionId = UTF8_TO_TCHAR(e.SessionId.c_str());
+		// 		UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Session started, SessionId = %s"), *SessionId);
+		// 	});
+		//
+		// this->SpeechRecognizer->SessionStopped.Connect([this](const MicrosoftSpeech::SessionEventArgs& e)
+		// 	{
+		// 		FString SessionId = UTF8_TO_TCHAR(e.SessionId.c_str());
+		// 		UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Session Stopped, SessionId = %s"), *SessionId);
+		// 	});
 		
 		SpeechRecognizer->StartKeywordRecognitionAsync(this->Model).get();
+
+		UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Keyword recognition completed"));
 		recognition_end_promise.get_future().get();
 		StopKeywordRecognitionAsync();
 		UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Keyword recognition finished"));
@@ -115,11 +134,12 @@ bool UAzSpeechAwakenerSubsystem::StartKeywordRecognitionAsync()
 
 void UAzSpeechAwakenerSubsystem::StopKeywordRecognitionAsync()
 {
-	if(!SpeechRecognizer)
+	if(!SpeechRecognizer || !bIsRunning)
 	{
 		return;
 	}
 	SpeechRecognizer->StopKeywordRecognitionAsync().get();
 	SpeechRecognizer.reset();
+	bIsRunning = false;
 	UE_LOG(LogAzSpeechAwakenerSubsystem, Display, TEXT("Keyword recognition stop"));
 }

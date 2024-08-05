@@ -34,7 +34,8 @@ public:
 	FRecordingDelegate StopDelegate;
 	
 	UVoiceRecordingAsyncAction(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+
+	/** 开始录制本地语音 */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Voice Recording", meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
 	static UVoiceRecordingAsyncAction* Start(
 		const UObject* WorldContextObject,
@@ -46,6 +47,7 @@ public:
 		USoundSubmix* InSoundSubmix = nullptr,
 		USoundWave* InExistingSoundWaveToOverwrite = nullptr);
 
+	/** 保存语音录制到本地（指定参数） */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Voice Recording", meta = (WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
 	void StopAudioRecordingOverwriteOutput(
 		const UObject* WorldContextObject,
@@ -55,6 +57,7 @@ public:
 		USoundSubmix* InSoundSubmix,
 		USoundWave* InExistingSoundWaveToOverwrite);
 
+	/** 保存语音录制到本地（默认参数） */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Voice Recording", meta = (WorldContext = "WorldContextObject", HidePin = "WorldContextObject"))
 	void StopVoiceRecording(const UObject* WorldContextObject);
 
@@ -64,6 +67,7 @@ private:
 	float SilenceThreshold; // 静音阈值
 	float MaxSilenceDuration; // 最大静音时间
 	FTimerHandle SilenceCheckTimerHandle;
+	FDelegateHandle AudioEnvelopeDelegateHandle;
 	
 	EAudioRecordingExportType OutputType;
 	FString OutputDir;

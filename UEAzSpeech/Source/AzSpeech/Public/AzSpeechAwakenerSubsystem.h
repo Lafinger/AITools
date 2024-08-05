@@ -49,6 +49,8 @@ public:
 	// UPROPERTY(BlueprintAssignable, Category = "AzSpeech|AzSpeechAwakenerSubsystem")
 	// FAwakenerDelegate AwakenerFailedDelegate;
 
+	UAzSpeechAwakenerSubsystem(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
@@ -63,4 +65,5 @@ public:
 private:
 	MicrosoftKeywordModel Model;
 	MicrosoftSpeechRecognizer SpeechRecognizer;
+	bool bIsRunning;
 };

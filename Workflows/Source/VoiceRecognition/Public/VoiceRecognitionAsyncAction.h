@@ -15,16 +15,19 @@ class VOICERECOGNITION_API UVoiceRecognitionAsyncAction final : public UWebSocke
 	GENERATED_BODY()
 public:
 	UVoiceRecognitionAsyncAction(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+
+	/** 链接语音识别服务器 */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Websocket|Voice Recognition Request", meta = (DisplayName = "Start Voice Recognition Request", BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", HidePin = "WorldContextObject", AutoCreateRefTerm = "InProtocols,InHeaders"))
 	static UVoiceRecognitionAsyncAction* Connect(const UObject* WorldContextObject, const FString& InUrl, const TArray<FString>& InProtocols, const TMap<FString, FString>& InHeaders);
-	
+
+	/** 取消链接语音识别服务器 */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Websocket|Voice Recognition Request")
 	virtual void Cancel() override;
 
+	/** 发送本地音频文件请求到语音识别服务器 */
 	UFUNCTION(BlueprintCallable, Category = "Workflow|Websocket|Voice Recognition Request")
 	bool Send(const FString& InLanguage, const FString& InAbsoluteFilePath);
-
+	
 	UPROPERTY()
 	UReceiveMessageBase* ReceiveMessageBase;
 

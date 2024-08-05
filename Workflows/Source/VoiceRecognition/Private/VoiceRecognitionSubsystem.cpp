@@ -47,9 +47,9 @@ bool UVoiceRecognitionSubsystem::Start(const UObject* WorldContextObject, const 
 		return false; 
 	}
 
-	VoiceRecordingAsyncAction->StartDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnRecordStart);
-	VoiceRecordingAsyncAction->RecordingDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnRecording);
-	VoiceRecordingAsyncAction->StopDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnRecordStop);
+	StartDelegate.Broadcast(FString());
+	VoiceRecordingAsyncAction->RecordingDelegate.AddUniqueDynamic(this, &UVoiceRecognitionSubsystem::OnRecording);
+	VoiceRecordingAsyncAction->StopDelegate.AddUniqueDynamic(this, &UVoiceRecognitionSubsystem::OnRecordStop);
 
 	return true;
 }
@@ -67,11 +67,6 @@ void UVoiceRecognitionSubsystem::Stop(const UObject* WorldContextObject)
 	}
 }
 
-void UVoiceRecognitionSubsystem::OnRecordStart(const float EnvelopeValue, USoundWave* SoundWave, const FString FilePath)
-{
-	StartDelegate.Broadcast(FString());
-}
-
 void UVoiceRecognitionSubsystem::OnRecording(const float EnvelopeValue, USoundWave* SoundWave, const FString FilePath)
 {
 	RecordingDelegate.Broadcast(FString());
@@ -79,7 +74,7 @@ void UVoiceRecognitionSubsystem::OnRecording(const float EnvelopeValue, USoundWa
 
 void UVoiceRecognitionSubsystem::OnRecordStop(const float EnvelopeValue, USoundWave* SoundWave, const FString FilePath)
 {
-
+	
 	UE_LOG(LogVoiceRecognitionSubsystem, Display, TEXT("ThreadID:%d, %s: Voice record completed"), FPlatformTLS::GetCurrentThreadId(), *FString(__FUNCTION__));
 	
 	const UVoiceRecognitionSettings* Settings = UVoiceRecognitionSettings::Get();
@@ -92,9 +87,9 @@ void UVoiceRecognitionSubsystem::OnRecordStop(const float EnvelopeValue, USoundW
 		return;
 	}
 	
-	VoiceRecognitionAsyncAction->ConnectedDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnServerConnected);
-	VoiceRecognitionAsyncAction->ProcessDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnServerResponse);
-	VoiceRecognitionAsyncAction->ErrorDelegate.AddDynamic(this, &UVoiceRecognitionSubsystem::OnServerConnectError);
+	VoiceRecognitionAsyncAction->ConnectedDelegate.AddUniqueDynamic(this, &UVoiceRecognitionSubsystem::OnServerConnected);
+	VoiceRecognitionAsyncAction->ProcessDelegate.AddUniqueDynamic(this, &UVoiceRecognitionSubsystem::OnServerResponse);
+	VoiceRecognitionAsyncAction->ErrorDelegate.AddUniqueDynamic(this, &UVoiceRecognitionSubsystem::OnServerConnectError);
 
 	VoiceRecognitionAsyncAction->Activate();
 }

@@ -45,13 +45,10 @@ UVoiceRecordingAsyncAction* UVoiceRecordingAsyncAction::Start(
 	AsyncAction->SoundSubmix = InSoundSubmix;
 	AsyncAction->ExistingSoundWaveToOverwrite = InExistingSoundWaveToOverwrite;
 
-	AsyncAction->AudioCaptureComponent->OnAudioEnvelopeValueNative.AddLambda([AsyncAction](const UAudioComponent* AudioComponent, const float EnvelopeValue)
+	AsyncAction->AudioEnvelopeDelegateHandle = AsyncAction->AudioCaptureComponent->OnAudioEnvelopeValueNative.AddLambda([AsyncAction](const UAudioComponent* AudioComponent, const float EnvelopeValue)
 	{
-		AsyncTask(ENamedThreads::GameThread, [AsyncAction, EnvelopeValue]()
-		{
-			AsyncAction->RecordingDelegate.Broadcast(EnvelopeValue, nullptr, FString());
-		});
-		
+		AsyncAction->RecordingDelegate.Broadcast(EnvelopeValue, nullptr, FString());
+
 		if(EnvelopeValue > AsyncAction->SilenceThreshold)
 		{
 			AsyncAction->SilenceDuration = 0.0f;
@@ -91,10 +88,17 @@ void UVoiceRecordingAsyncAction::StopAudioRecordingOverwriteOutput(const UObject
 {
 	if(SilenceCheckTimerHandle.IsValid())
 		WorldContextObject->GetWorld()->GetTimerManager().ClearTimer(SilenceCheckTimerHandle);
+
+	if(!bIsRecording)
+	{
+		return;
+	}
 	
 	USoundWave* SoundWave = UAudioMixerBlueprintLibrary::StopRecordingOutput(WorldContextObject, InOutputType, InOutputName, InOutputDir, InSoundSubmix, InExistingSoundWaveToOverwrite);
-	
+
 	AudioCaptureComponent->Stop();
+	AudioCaptureComponent->OnAudioEnvelopeValueNative.Remove(AudioEnvelopeDelegateHandle);
+	
 	bIsRecording = false;
 	FString AbsoluteFilePath = FPaths::ConvertRelativePathToFull(InOutputDir + InOutputName + FString(TEXT(".wav")));
 	StopDelegate.Broadcast(0.0, SoundWave, AbsoluteFilePath);
@@ -104,14 +108,5 @@ void UVoiceRecordingAsyncAction::StopAudioRecordingOverwriteOutput(const UObject
 
 void UVoiceRecordingAsyncAction::StopVoiceRecording(const UObject* WorldContextObject)
 {
-	if(SilenceCheckTimerHandle.IsValid())
-		WorldContextObject->GetWorld()->GetTimerManager().ClearTimer(SilenceCheckTimerHandle);
-	
-	USoundWave* SoundWave = UAudioMixerBlueprintLibrary::StopRecordingOutput(WorldContextObject, OutputType, OutputName, OutputDir, SoundSubmix, ExistingSoundWaveToOverwrite);
-	AudioCaptureComponent->Stop();
-	bIsRecording = false;
-	FString AbsoluteFilePath = FPaths::ConvertRelativePathToFull(OutputDir + OutputName + FString(TEXT(".wav")));
-	StopDelegate.Broadcast(0.0, SoundWave, AbsoluteFilePath);
-
-	SetReadyToDestroy();
+	StopAudioRecordingOverwriteOutput(WorldContextObject, OutputType, OutputDir, OutputName, SoundSubmix, ExistingSoundWaveToOverwrite);
 }
